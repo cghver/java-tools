@@ -58,7 +58,8 @@ public class OKHttpHelper {
      */
     public OKHttpHelper onSuccess(OkHttpResHandler okHttpResHandler) {
         if (res != null) {
-            if ("0000".equals(JsonHelper.getNodeString("code", res))) {
+            if (!ResponseCode.CONNECT_TIMEOUT.getCode().equals(JsonHelper.getNodeString("code", res))
+                    && !ResponseCode.READ_TIMEOUT.getCode().equals(JsonHelper.getNodeString("code", res))) {
                 okHttpResHandler.execute(res);
             }
         }
