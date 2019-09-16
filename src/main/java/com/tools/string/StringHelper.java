@@ -1,9 +1,6 @@
 package com.tools.string;
-
 import com.google.common.base.Strings;
-
 import java.util.regex.Pattern;
-
 public final class StringHelper {
     /**
      * 检查字符串是否为空或null
@@ -17,6 +14,21 @@ public final class StringHelper {
         return Strings.isNullOrEmpty(str.trim());
     }
 
+
+    /**
+     * 检查字符串是否为空或null
+     * @param str
+     * @return
+     */
+    public static boolean isNullOrBlank(String... str) {
+        for (String s : str){
+            if(isNullOrBlank(s)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 去除字符串两边某个字符
      *
@@ -25,7 +37,9 @@ public final class StringHelper {
      * @return
      */
     public static String trim(String src, char c) {
-        if (isNullOrBlank(src)) return src;
+        if (isNullOrBlank(src)) {
+            return src;
+        }
         String rex = String.format("^[%c]+|[%c]+$", c, c);
         return src.replaceAll(rex, "");
     }
@@ -38,7 +52,9 @@ public final class StringHelper {
      * @return
      */
     public static String trimLeft(String src, char c) {
-        if (isNullOrBlank(src)) return src;
+        if (isNullOrBlank(src)) {
+            return src;
+        }
         String rex = String.format("^[%c]+", c);
         return src.replaceAll(rex, "");
     }
@@ -51,7 +67,9 @@ public final class StringHelper {
      * @return
      */
     public static String trimRight(String src, char c) {
-        if (isNullOrBlank(src)) return src;
+        if (isNullOrBlank(src)) {
+            return src;
+        }
         String rex = String.format("[%c]+$", c);
         return src.replaceAll(rex, "");
     }
@@ -64,15 +82,46 @@ public final class StringHelper {
      * @return
      */
     public static boolean regex(String reg, String input) {
-        if (reg == null || reg.equals("")) {
-            throw new NullPointerException("正则表达式规则为空");
+        if (reg == null || "".equals(reg)) {
+            return false;
         }
-        if (input == null || input.equals("")) {
-            throw new NullPointerException("请传入你要正则表达式内容");
+        if (input == null || "".equals(input)) {
+            return false;
         }
         Pattern pattern = Pattern.compile(reg);
         return pattern.matcher(input).matches();
     }
 
+
+    public static boolean isPhone(String userName) {
+        if (Strings.isNullOrEmpty(userName)) {
+            return false;
+        }
+        return StringHelper.regex("0?(13|14|15|17|18)[0-9]{9}", userName);
+    }
+
+    public static boolean isEmail(String userName)  {
+        if (Strings.isNullOrEmpty(userName)) {
+           return false;
+        }
+        return StringHelper.regex("\\w[-\\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\\.)+[A-Za-z]{2,14}", userName);
+    }
+
+    public static boolean isPhoneOrEmail(String username)  {
+        return isEmail(username) || isPhone(username);
+    }
+
+    /**
+     * 判断是否是Ip
+     * @param ip
+     * @return
+     */
+    public static boolean isIp(String ip){
+        if (Strings.isNullOrEmpty(ip)) {
+            return false;
+        }
+        String reg = "(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)";
+        return StringHelper.regex(reg, ip);
+    }
 
 }

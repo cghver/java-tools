@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.Optional;
 
@@ -68,12 +67,16 @@ public final class JsonHelper {
      * @return
      */
     public static String getNodeString(String key, String json) {
-        if (key == null || json == null) return null;
+        if (key == null || json == null) {
+            return null;
+        }
         String result = null;
         try {
             JsonNode jsonNode = om.readTree(json);
             Object o = jsonNode.get(key);
-            if (o == null) return null;
+            if (o == null) {
+                return null;
+            }
             result = String.valueOf(o).replaceAll("(^\")|(\"$)", "").trim();
         } catch (IOException e) {
             e.printStackTrace();

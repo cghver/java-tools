@@ -33,7 +33,7 @@ public final class ResponseHelper {
     }
 
     // 列表数据返回
-    public static <T> Response apiJsonToListBean(String result, Class<T> bean) {
+    public static <T> Response<List<T>> apiJsonToListBean(String result, Class<T> bean) {
         String code = JsonHelper.getNodeString("code", result);
         String msg = JsonHelper.getNodeString("msg", result);
         String data = JsonHelper.getNodeString("data", result);

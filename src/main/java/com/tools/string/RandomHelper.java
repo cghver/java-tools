@@ -6,6 +6,7 @@ public final class RandomHelper {
 
     /**
      * 随机字符串
+     *
      * @param length 需要生成随机字符串的长度
      * @return string
      */

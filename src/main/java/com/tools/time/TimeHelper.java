@@ -1,6 +1,7 @@
 package com.tools.time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -20,15 +21,24 @@ public enum TimeHelper {
         return new SimpleDateFormat("yyMMddHHmmssSSS");
     })),
     /**
-     * 时间格式
+     * yyMMddHHmmss时间格式
      */
     F_yyMMddHHmmss("yyMMddHHmmss", ThreadLocal.withInitial(() -> {
         return new SimpleDateFormat("yyMMddHHmmss");
     })),
+
     /**
-     * FUNCTION用来调用函数
+     * yyyy-MM-dd时间格式
      */
-    FUNCTION(null, null);
+    F_yyyy_MM_dd("yyyy-MM-dd", ThreadLocal.withInitial(() -> {
+        return new SimpleDateFormat("yyyy-MM-dd");
+    })),
+    /**
+     * yyyyMMdd时间格式
+     */
+    F_yyyyMMdd("yyyyMMdd", ThreadLocal.withInitial(() -> {
+        return new SimpleDateFormat("yyyyMMdd");
+    }));
     private String formatKey;
     private ThreadLocal<DateFormat> dateFormatThreadLocal;
 
@@ -50,8 +60,7 @@ public enum TimeHelper {
      *
      * @return string
      */
-    public String getFormatTime(TimeHelper timeHelper) {
-        if (timeHelper.equals(TimeHelper.FUNCTION)) return null;
+    public static String getFormatTime(TimeHelper timeHelper) {
         return timeHelper.getDateFormatThreadLocal().get().format(System.currentTimeMillis());
     }
 
@@ -60,9 +69,22 @@ public enum TimeHelper {
      *
      * @return string
      */
-    public String getFormatTime(TimeHelper timeHelper, long timestamp) {
-        if (timeHelper.equals(TimeHelper.FUNCTION)) return null;
+    public static String getFormatTime(TimeHelper timeHelper, long timestamp) {
         return timeHelper.getDateFormatThreadLocal().get().format(timestamp);
+    }
+
+    /**
+     * 将字符串的时间转化为时间戳
+     * @param timeHelper 时间格式
+     * @param formatTime 字符串时间
+     * @return
+     */
+    public static long getTimeStampFromFormatTime(TimeHelper timeHelper, String formatTime){
+        try {
+            return timeHelper.getDateFormatThreadLocal().get().parse(formatTime).getTime();
+        } catch (ParseException e) {
+            return 0;
+        }
     }
 
     /**
@@ -71,9 +93,13 @@ public enum TimeHelper {
      * @param length 长度
      * @return 长整形
      */
-    public long getTimestampLong(int length) {
-        if (length > 13) length = 13;
-        if (length < 1) length = 1;
+    public static long getTimestampLong(int length) {
+        if (length > 13) {
+            length = 13;
+        }
+        if (length < 1) {
+            length = 1;
+        }
         long t = System.currentTimeMillis();
         length = 13 - length;
         // 倍数
@@ -83,16 +109,15 @@ public enum TimeHelper {
 
     /**
      * 返回毫秒时间戳
-     *
      * @return timestamp
      */
     public Timestamp getTimeStamp() {
         return new Timestamp(System.currentTimeMillis());
     }
 
-//    public static void main(String[] args) {
-//        System.out.println(TimeHelper.FUNCTION.getFormatTime(TimeHelper.F_STANDARD));
-//    }
+    public static void main(String[] args) {
+        System.out.println(TimeHelper.getTimestampLong(10));
+    }
 
 
 }
