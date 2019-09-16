@@ -1,12 +1,11 @@
 package com.tools.encryption;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -31,6 +30,17 @@ public class RSAHelper {
      * 默认密钥大小
      */
     private static final int KEY_SIZE = 1024;
+    /**
+     * 默认公钥
+     */
+    private static final String DEFAULT_PRIVATE_KEY = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJwplYA3Yhc4uQUTyUYHxX1vzIdJPVhmlqHIiOGqnHGdAl5VxAnLhLJjgEXCyl85iUAqP01dnzqFaMaCYzmEhToYDop+7JwmAN+nIaqm+A8SIYnkcXOOuxPvK6t44Wy9MhZ3HoWPVHoZnDACaYnb2hGZb4ISQra6hHV0NkU+1binAgMBAAECgYABnZSEXQ5Quy9+0/OTG+V5JLzy8VkHHxiT1+VCoGc57avmmfCLQWXACrN7BUbesVOwLD+3Zy6MhnDNDPBF2g8exJP6Fgn7lXPpMFcgFjT0FmbVuaIC82k5yhfca6YKz/CFuWjtOHsm8/ozzpJKFf9D2Ie++lchqQlWnlTUL2NucQJBAN4sIb1z/3kxgYOEvYzeSS17eImTUSGFx92LlmApsXBrcsweh/N6Az5/inQ9Y/qdGiXa6Qq5ilXryyzvpnj7DQUCQQCz8IGri6Isn4zdQ6fhEhw5oj588w8CqeTeaAGlwiFA8c9+MxqHUr+uHv5fUOcX2trVJoegyt9NkH0X6Mj63D67AkBerh3+1+VCp6dS/gmtc7lpyZmXv5EuoQ2Iy4jdGEeG6jN063nyd8fUJZRCbzshPTw8b6sqp+FdNmxSjRq7qfllAkA5gF7/weR2XBo4zxkD3LS2Wjmb1lRypnYj+JqmLM5RobSMAKq2meP1MaRaM1FWFzMdMG3hHVOUxtqi3Fn1iJJnAkEAuP20nnCGSAWg6VMJjRkTlz+sp94if7OPXvvNmcBt4xqNpgNKRc6RUYE+oYu4eNZr1VEw3qIay9O8azrBamAKww==";
+
+    /**
+     * 默认私钥
+     */
+    private static final String DEFAULT_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcKZWAN2IXOLkFE8lGB8V9b8yHST1YZpahyIjhqpxxnQJeVcQJy4SyY4BFwspfOYlAKj9NXZ86hWjGgmM5hIU6GA6KfuycJgDfpyGqpvgPEiGJ5HFzjrsT7yureOFsvTIWdx6Fj1R6GZwwAmmJ29oRmW+CEkK2uoR1dDZFPtW4pwIDAQAB";
+
+
 
     /**
      * 密钥对生成器
@@ -95,8 +105,12 @@ public class RSAHelper {
      * @param publicKeyString RSA 公钥 if null then getPublicKey()
      * @return 加密后的密文(16进制的字符串)
      */
-    public static String encryptByPublic(byte[] content, String publicKeyString) throws InvalidKeySpecException {
-        if (publicKeyString == null) return null;
+    public static String encryptByPublic(String content, String publicKeyString) throws InvalidKeySpecException {
+        if (content == null || publicKeyString == null) {
+            return null;
+        }
+
+        byte[] contentByte = Base64.getEncoder().encodeToString(content.getBytes()).getBytes();
 
         byte[] keyBytes = decoder.decode(publicKeyString);
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(keyBytes);
@@ -107,7 +121,7 @@ public class RSAHelper {
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             //该密钥能够加密的最大字节长度
             int splitLength = ((RSAPublicKey) publicKey).getModulus().bitLength() / 8 - 11;
-            byte[][] arrays = splitBytes(content, splitLength);
+            byte[][] arrays = splitBytes(contentByte, splitLength);
             StringBuilder stringBuilder = new StringBuilder();
             for (byte[] array : arrays) {
                 stringBuilder.append(bytesToHexString(cipher.doFinal(array)));
@@ -127,6 +141,8 @@ public class RSAHelper {
         return null;
     }
 
+
+
     /**
      * RSA私钥加密
      *
@@ -134,8 +150,13 @@ public class RSAHelper {
      * @param privateKeyString RSA 私钥(base64)
      * @return 加密后的密文(16进制的字符串)
      */
-    public static String encryptByPrivate(byte[] content, String privateKeyString) throws InvalidKeySpecException {
-        if (privateKeyString == null) return null;
+    public static String encryptByPrivate(String content, String privateKeyString) throws InvalidKeySpecException {
+        if (content == null || privateKeyString == null) {
+            return null;
+        }
+
+
+        byte[] contentByte = Base64.getEncoder().encodeToString(content.getBytes()).getBytes();
 
         byte[] keyBytes = decoder.decode(privateKeyString);
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(keyBytes);
@@ -146,7 +167,7 @@ public class RSAHelper {
             cipher.init(Cipher.ENCRYPT_MODE, privateKey);
             //该密钥能够加密的最大字节长度
             int splitLength = ((RSAPrivateKey) privateKey).getModulus().bitLength() / 8 - 11;
-            byte[][] arrays = splitBytes(content, splitLength);
+            byte[][] arrays = splitBytes(contentByte, splitLength);
             StringBuilder stringBuilder = new StringBuilder();
             for (byte[] array : arrays) {
                 stringBuilder.append(bytesToHexString(cipher.doFinal(array)));
@@ -175,8 +196,9 @@ public class RSAHelper {
      * @return 解密后的明文
      */
     public static String decryptByPrivate(String content, String privateKeyString) throws InvalidKeySpecException {
-        if (privateKeyString == null) return null;
-
+        if (content == null || privateKeyString == null) {
+            return null;
+        }
 
         byte[] keyBytes = decoder.decode(privateKeyString);
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(keyBytes);
@@ -194,7 +216,7 @@ public class RSAHelper {
             for (byte[] array : arrays) {
                 stringBuilder.append(new String(cipher.doFinal(array)));
             }
-            return stringBuilder.toString();
+            return new String(Base64.getDecoder().decode(stringBuilder.toString()));
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error("encrypt()#NoSuchAlgorithmException", e);
         } catch (NoSuchPaddingException e) {
@@ -217,7 +239,9 @@ public class RSAHelper {
      * @return 解密后的明文
      */
     public static String decryptByPublic(String content, String publicKeyString) throws InvalidKeySpecException {
-        if (publicKeyString == null) return null;
+        if (content == null || publicKeyString == null) {
+            return null;
+        }
 
         byte[] keyBytes = decoder.decode(publicKeyString);
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(keyBytes);
@@ -234,7 +258,7 @@ public class RSAHelper {
             for (byte[] array : arrays) {
                 stringBuilder.append(new String(cipher.doFinal(array)));
             }
-            return stringBuilder.toString();
+            return new String(Base64.getDecoder().decode(stringBuilder.toString()));
         } catch (NoSuchAlgorithmException e) {
             LOGGER.error("encrypt()#NoSuchAlgorithmException", e);
         } catch (NoSuchPaddingException e) {
@@ -326,20 +350,69 @@ public class RSAHelper {
     }
 
 
-//    public static void main(String[] args) throws InvalidKeySpecException {
+
+
+    /**
+     * RSA公钥加密
+     * @param content         等待加密的数据
+     * @return 加密后的密文(16进制的字符串)
+     */
+    public static String encryptByPublic(String content) throws InvalidKeySpecException {
+        return encryptByPublic(content, DEFAULT_PUBLIC_KEY);
+    }
+
+
+
+    /**
+     * RSA私钥加密
+     *
+     * @param content  等待加密的数据
+     * @return 加密后的密文(16进制的字符串)
+     */
+    public static String encryptByPrivate(String content) throws InvalidKeySpecException {
+        return encryptByPrivate(content, DEFAULT_PRIVATE_KEY);
+    }
+
+
+    /**
+     * RSA私钥解密
+     *
+     * @param content          等待解密的数据
+     * @return 解密后的明文
+     */
+    public static String decryptByPrivate(String content) throws InvalidKeySpecException {
+        return decryptByPrivate(content, DEFAULT_PRIVATE_KEY);
+    }
+
+    /**
+     * RSA公钥解密
+     *
+     * @param content         等待解密的数据
+     * @return 解密后的明文
+     */
+    public static String decryptByPublic(String content) throws InvalidKeySpecException {
+        return decryptByPublic(content, DEFAULT_PUBLIC_KEY);
+    }
+
+
+
+
+    public static void main(String[] args) throws InvalidKeySpecException, UnsupportedEncodingException {
 //        Map<String, Object> map = generateKeyPair();
 //        String privateKey = (String) map.get("private");
 //        String publicKey = (String) map.get("public");
-//        String s = "Hello This is My House";
-//        String c1 = RSAHelper.encryptByPublic(s.getBytes(), publicKey);
-//        String m1 = RSAHelper.decryptByPrivate(c1, privateKey);
-//        String c2 = RSAHelper.encryptByPrivate(s.getBytes(), privateKey);
-//        String m2 = RSAHelper.decryptByPublic(c2, publicKey);
-//        System.out.println(c1);
-//        System.out.println(m1);
-//        System.out.println(c2);
-//        System.out.println(m2);
-//    }
+//        System.out.println(privateKey);
+//        System.out.println(publicKey);
+        String s = "cda那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年da那UC多送您极道少女敬爱的刹那间你加你家阿森纳达是参赛队 农家菜是几年赛队 农家菜是几年";
+        String c1 = RSAHelper.encryptByPublic(s);
+        String m1 = RSAHelper.decryptByPrivate(c1);
+        String c2 = RSAHelper.encryptByPrivate(s);
+        String m2 = RSAHelper.decryptByPublic(c2);
+        System.out.println(c1);
+        System.out.println(m1);
+        System.out.println(c2);
+        System.out.println(m2);
+    }
 
 
 }

@@ -2,8 +2,6 @@ package com.tools.encryption;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-
 /**
  * @Auther: Tang XiaoBai
  * @Date: 2018/11/15 13:23
@@ -42,5 +40,6 @@ public class EncryptionHelper {
     public static String sha256(String s) {
         return process("SHA-256", s);
     }
+
 
 }
