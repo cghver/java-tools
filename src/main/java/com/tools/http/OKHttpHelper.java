@@ -2,7 +2,6 @@ package com.tools.http;
 
 import com.tools.json.JsonHelper;
 import com.tools.response.ResponseCode;
-import com.tools.response.ResponseTemplate;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -167,7 +166,7 @@ public class OKHttpHelper {
             }
 
             if (response.code() != 200) {
-                res = JsonHelper.transToString(ResponseTemplate.failed("请求错误", responseBodyString));
+                res = JsonHelper.transToString(com.tools.response.Response.failed("请求错误", responseBodyString));
             } else {
                 res = responseBodyString;
             }

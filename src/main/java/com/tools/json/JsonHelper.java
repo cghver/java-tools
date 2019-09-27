@@ -4,13 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.tools.string.StringHelper;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
- * @Auther: Tang XiaoBai
- * @Date: 2018/11/26 15:48
- * @Description: 这个类用来执行json的序列化非反序列化操作
+ * @auther: Tang XiaoBai
+ * @date: 2018/11/26 15:48
+ * @description: 这个类用来执行json的序列化反序列化操作
  */
 public final class JsonHelper {
     private static ObjectMapper om;
@@ -21,10 +24,67 @@ public final class JsonHelper {
     }
 
     /**
+     * 判断是否是有效的json
+     *
+     * @param json json字符串
+     * @return true or false
+     */
+    public static boolean isJson(String json) {
+        if (StringHelper.isNullOrBlank(json)) {
+            return false;
+        }
+        try {
+            om.readTree(json);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 判断是否是有效的json对象
+     *
+     * @param json json字符串
+     * @return true or false
+     */
+    public static boolean isJsonObject(String json) {
+        if (StringHelper.isNullOrBlank(json)) {
+            return false;
+        }
+        try {
+            JsonNode jsonNode = om.readTree(json);
+            JsonNodeType jsonNodeType = jsonNode.getNodeType();
+            return jsonNodeType.equals(JsonNodeType.OBJECT);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 判断是否是有效的json数组
+     *
+     * @param json json字符串
+     * @return true or false
+     */
+    public static boolean isJsonList(String json) {
+        if (StringHelper.isNullOrBlank(json)) {
+            return false;
+        }
+        try {
+            JsonNode jsonNode = om.readTree(json);
+            JsonNodeType jsonNodeType = jsonNode.getNodeType();
+            return jsonNodeType.equals(JsonNodeType.ARRAY);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+
+    /**
      * 对象转json字符串，如果转换失败则返回null
      *
-     * @param object
-     * @return
+     * @param object 对象
+     * @return String或null
      */
     public static String transToString(Object object) {
         return Optional.ofNullable(object)
@@ -32,7 +92,6 @@ public final class JsonHelper {
                     try {
                         return om.writeValueAsString(v);
                     } catch (JsonProcessingException e) {
-                        e.printStackTrace();
                         return null;
                     }
                 }).orElse(null);
@@ -47,16 +106,34 @@ public final class JsonHelper {
      * @return bean
      */
     public static <T> T transToObject(String json, Class<T> bean) {
-        return Optional.ofNullable(json)
-                .map(v -> {
-                    try {
-                        return om.readValue(v, bean);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                })
-                .orElse(null);
+        if (!isJsonObject(json)) {
+            return null;
+        }
+        try {
+            return om.readValue(json, bean);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * 字符串转List 如果转换失败返回null
+     *
+     * @param json 字符串
+     * @param bean bean
+     * @param <T>  泛型
+     * @return bean
+     */
+    public static <T> List<T> transToList(String json, Class<T> bean) {
+        if (!isJsonList(json)) {
+            return null;
+        }
+        try {
+            return om.readValue(json, om.getTypeFactory().constructCollectionType(List.class, bean));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**
@@ -67,7 +144,7 @@ public final class JsonHelper {
      * @return
      */
     public static String getNodeString(String key, String json) {
-        if (key == null || json == null) {
+        if (!isJsonObject(json)) {
             return null;
         }
         String result = null;

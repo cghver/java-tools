@@ -1,6 +1,6 @@
 package com.tools.aop.validate;
 
-import com.tools.response.ResponseTemplate;
+import com.tools.response.Response;
 import com.tools.validate.ValidateException;
 import com.tools.validate.ValidateHelper;
 import org.aspectj.lang.JoinPoint;
@@ -29,7 +29,7 @@ public class MyValidAop {
                 ValidateHelper.validate(o);
             } catch (ValidateException e) {
                 String errCode = getErrCode(joinPoint);
-                return ResponseTemplate.failed(errCode, e.getMessage());
+                return Response.failed(errCode, e.getMessage());
             }
         }
         return joinPoint.proceed();

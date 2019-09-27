@@ -26,7 +26,27 @@ public enum ResponseCode {
     /**
      * 读取数据超时
      */
-    READ_TIMEOUT("1005", "读取数据超时");
+    READ_TIMEOUT("1005", "读取数据超时"),
+
+    /**
+     * 数据不存在
+     */
+    DATA_NOT_EXISTS("1006", "数据不存在"),
+
+    /**
+     * 数据已存在
+     */
+    DATA_EXISTS("1007", "数据已存在"),
+
+    /**
+     * 数据库操作异常
+     */
+    DB_ERROR("1008", "数据库操作异常"),
+
+    /**
+     * 未知异常
+     */
+    UNKNOW_ERROR("9999", "未知异常");
 
 
     private String code;
