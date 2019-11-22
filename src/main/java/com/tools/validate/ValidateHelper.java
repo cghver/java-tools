@@ -1,8 +1,4 @@
 package com.tools.validate;
-
-import com.google.common.base.Strings;
-import com.tools.string.StringHelper;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;

@@ -97,7 +97,7 @@ public final class StringHelper {
         if (Strings.isNullOrEmpty(userName)) {
             return false;
         }
-        return StringHelper.regex("0?(13|14|15|17|18)[0-9]{9}", userName);
+        return StringHelper.regex("0?(13|14|15|17|18|19)[0-9]{9}", userName);
     }
 
     public static boolean isEmail(String userName)  {

@@ -1,4 +1,8 @@
 package com.tools.encryption;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.crypto.BadPaddingException;
@@ -12,10 +16,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * RSA算法加密/解密工具类
@@ -396,6 +397,9 @@ public class RSAHelper {
 
 
 
+    private static String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKJHEZLmh5EX0wslfDSW01QdU9Nh8BPmkV3vaR9hZP7IsZxcKDsTyDh9mcIicPTxFUlNTPG00ypQVmRPz/QirHkOVy0hiWPgaC3JLQkOPqJEafumsWGH2GspliQ67rrK0Zzw5i6k4qjxVHv+XiQvtK0imvazv/y5ZMAChw6twtgfAgMBAAECgYBaHlORG/rPRcbK2t9WKShk/wBtVGdJ9fJmkyzy41h98aBI8Bjbbgnz7TR1TkEilbu3gHkphbz7M7A2duhKcPMMR8RVDatl7y6Y9z5n2NyL5xbo69ZAR0KWdvqbaPsZq0VEXrgZHjY5LoHEa+PwNJFcMRASckNSnWHBQfqqsDg5EQJBAODYQxOicBF9Yf/D3jYDJgMW38otr/clO7hYqTg/qxObaAQ7JyGeXrFhF/xAOxySUHEYPvEh1HQErw9hDC5B2gkCQQC4w2l3iqfode7ohrzEzUeEbf/ePI011FotMYGKdpo7eKNCRIvMOjNbM1f7jwW/n5bBa2WQ/O0lVUWLXQKq7MrnAkEAyxRpmT1ZDWL69aC6fnxfg+DQJnMXgRkfFIT36ncPFLmDvHaVBHdfPcTdfhehjE/W2h81EmQk2Nk2KKTV9J3DyQJAMY5oOWH9S0JmhAOvmfGdXw3J9Se0kF2WmkyO/D53e8ANufZ8sJhjsfCBhr2DwzPg0Zwmr87HJJ5MeubFkmbUvQJAH6D/h5YNHtlHIH468/SF1x5ThixZIt2jCEf6ATjZcUqmbAYNY1IO/ITBNqZiXnmjufIChpoK4YkETxWC6PHUBw==";
+    private static String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCiRxGS5oeRF9MLJXw0ltNUHVPTYfAT5pFd72kfYWT+yLGcXCg7E8g4fZnCInD08RVJTUzxtNMqUFZkT8/0Iqx5DlctIYlj4GgtyS0JDj6iRGn7prFhh9hrKZYkOu66ytGc8OYupOKo8VR7/l4kL7StIpr2s7/8uWTAAocOrcLYHwIDAQAB";
+
 
     public static void main(String[] args) throws InvalidKeySpecException, UnsupportedEncodingException {
 //        Map<String, Object> map = generateKeyPair();
@@ -413,7 +417,22 @@ public class RSAHelper {
 //        System.out.println(c2);
 //        System.out.println(m2);
 
-        System.out.println("19092313561200bqv8b3tarmos000000".hashCode());
+//        JwtBuilder builder= Jwts.builder()
+//                .setId("888")
+//                .setSubject("小白")
+//                .setIssuedAt(new Date())//设置签发时间
+//                .setSubject("subject")
+//                .setExpiration(new Date(System.currentTimeMillis()+ 86400000))
+//                .claim("tanghuachun", "hello")
+//                .claim("roles", "admin")
+//                .signWith(SignatureAlgorithm.HS256,"xiaocai");//设置签名秘钥
+//        String token = builder.compact();
+//        System.out.println(token);
+//
+//        Claims claims = Jwts.parser().setSigningKey("xiaocai").parseClaimsJws(token).getBody();
+//        System.out.println(claims);
+
+       // System.out.println("19092313561200bqv8b3tarmos000000".hashCode());
     }
 
 
