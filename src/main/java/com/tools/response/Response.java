@@ -1,5 +1,5 @@
 package com.tools.response;
-import com.tools.json.JsonHelper;
+import cn.hutool.json.JSONUtil;
 import java.io.Serializable;
 import java.util.List;
 
@@ -106,10 +106,10 @@ public final class Response<T> implements Serializable {
      * @param bean
      * @return
      */
-    public static <T> Response<T> JsonToResponse(String json, Class<T> bean) {
-        String code = JsonHelper.getNodeString("code", json);
-        String msg = JsonHelper.getNodeString("msg", json);
-        String dataString = JsonHelper.getNodeString("data", json);
+    public static <T> Response<T> jsonToResponse(String json, Class<T> bean) {
+        String code = JSONUtil.parseObj(json).getStr("code");
+        String msg = JSONUtil.parseObj(json).getStr("msg");
+        String dataString = JSONUtil.parseObj(json).getStr("data");
 
         if (code == null || msg == null ){
             return null;
@@ -117,8 +117,7 @@ public final class Response<T> implements Serializable {
         if (bean == null  || dataString == null){
             return new Response<>(code, msg, null);
         }
-
-        T data = JsonHelper.transToObject(dataString, bean);
+        T data = JSONUtil.toBean(dataString, bean);
         return new Response<>(code, msg, data);
     }
 
@@ -129,9 +128,9 @@ public final class Response<T> implements Serializable {
      * @return
      */
     public static <T> Response<List<T>> jsonToListResponse(String json, Class<T> bean) {
-        String code = JsonHelper.getNodeString("code", json);
-        String msg = JsonHelper.getNodeString("msg", json);
-        String data = JsonHelper.getNodeString("data", json);
+        String code = JSONUtil.parseObj(json).getStr("code");
+        String msg = JSONUtil.parseObj(json).getStr("msg");
+        String data = JSONUtil.parseObj(json).getStr("data");
         if (code == null || msg == null){
             return null;
         }
@@ -139,7 +138,8 @@ public final class Response<T> implements Serializable {
             return new Response<>(code, msg, null);
         }
 
-        List<T> list = JsonHelper.transToList(data, bean);
+        List<T> list = JSONUtil.toList(JSONUtil.parseArray(data), bean);
+
         return new Response<>(code, msg, list);
     }
 }

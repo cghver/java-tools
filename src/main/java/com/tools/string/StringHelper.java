@@ -1,34 +1,8 @@
 package com.tools.string;
+import cn.hutool.core.util.StrUtil;
 import com.google.common.base.Strings;
 import java.util.regex.Pattern;
 public final class StringHelper {
-    /**
-     * 检查字符串是否为空或null
-     * @param str
-     * @return
-     */
-    public static boolean isNullOrBlank(String str) {
-        if (Strings.isNullOrEmpty(str)) {
-            return true;
-        }
-        return Strings.isNullOrEmpty(str.trim());
-    }
-
-
-    /**
-     * 检查字符串是否为空或null
-     * @param str
-     * @return
-     */
-    public static boolean isNullOrBlank(String... str) {
-        for (String s : str){
-            if(isNullOrBlank(s)){
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * 去除字符串两边某个字符
      *
@@ -37,7 +11,7 @@ public final class StringHelper {
      * @return
      */
     public static String trim(String src, char c) {
-        if (isNullOrBlank(src)) {
+        if (StrUtil.isBlank(src)) {
             return src;
         }
         String rex = String.format("^[%c]+|[%c]+$", c, c);
@@ -52,7 +26,7 @@ public final class StringHelper {
      * @return
      */
     public static String trimLeft(String src, char c) {
-        if (isNullOrBlank(src)) {
+        if (StrUtil.isBlank(src)) {
             return src;
         }
         String rex = String.format("^[%c]+", c);
@@ -67,7 +41,7 @@ public final class StringHelper {
      * @return
      */
     public static String trimRight(String src, char c) {
-        if (isNullOrBlank(src)) {
+        if (StrUtil.isBlank(src)) {
             return src;
         }
         String rex = String.format("[%c]+$", c);
@@ -123,5 +97,6 @@ public final class StringHelper {
         String reg = "(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)\\.(25[0-5]|2[0-4]\\d|[0-1]\\d{2}|[1-9]?\\d)";
         return StringHelper.regex(reg, ip);
     }
+
 
 }

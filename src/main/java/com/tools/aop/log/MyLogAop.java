@@ -1,5 +1,5 @@
 package com.tools.aop.log;
-import com.tools.json.JsonHelper;
+import cn.hutool.json.JSONUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -33,14 +33,14 @@ public class MyLogAop {
             if (o instanceof ServletRequest || o instanceof ServletResponse) {
                 param.add(o);
             } else {
-                String s = JsonHelper.transToString(o);
+                String s = JSONUtil.toJsonStr(o);
                 param.add(s);
             }
         }
         long start = System.currentTimeMillis();
         Object ret = joinPoint.proceed();
         long end = System.currentTimeMillis();
-        logger.info("调用方法：{}，消耗时间：{}毫秒, 参数为：{}， 返回值为：{}", methodName, end - start,param, JsonHelper.transToString(ret));
+        logger.info("调用方法：{}，消耗时间：{}毫秒, 参数为：{}， 返回值为：{}", methodName, end - start,param, JSONUtil.toJsonStr(ret));
 
         return ret;
     }

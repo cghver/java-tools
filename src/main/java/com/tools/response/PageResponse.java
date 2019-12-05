@@ -1,7 +1,5 @@
 package com.tools.response;
-
-import com.tools.json.JsonHelper;
-
+import cn.hutool.json.JSONUtil;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
@@ -151,14 +149,14 @@ public class PageResponse<T> implements Serializable {
      * @return
      */
     public static <T> PageResponse<T> jsonToPageResponse(String json, Class<T> bean) {
-        String code = JsonHelper.getNodeString("code", json);
-        String msg = JsonHelper.getNodeString("msg", json);
+        String code = JSONUtil.parseObj(json).getStr("code");
+        String msg = JSONUtil.parseObj(json).getStr("msg");
 
-        Integer pageNo = Optional.ofNullable(JsonHelper.getNodeInteger("pageNo", json)).orElse(0);
-        Integer pageSize = Optional.ofNullable(JsonHelper.getNodeInteger("pageSize", json)).orElse(0);
-        Integer total = Optional.ofNullable(JsonHelper.getNodeInteger("total", json)).orElse(0);
-        Integer totalPages = Optional.ofNullable(JsonHelper.getNodeInteger("totalPages", json)).orElse(0);
-        String data = JsonHelper.getNodeString("data", json);
+        Integer pageNo = Optional.ofNullable(JSONUtil.parseObj(json).getInt("pageNo")).orElse(0);
+        Integer pageSize = Optional.ofNullable(JSONUtil.parseObj(json).getInt("pageSize")).orElse(0);
+        Integer total = Optional.ofNullable(JSONUtil.parseObj(json).getInt("total")).orElse(0);
+        Integer totalPages = Optional.ofNullable(JSONUtil.parseObj(json).getInt("totalPages")).orElse(0);
+        String data = JSONUtil.parseObj(json).getStr("data");
         if (code == null || msg == null  || bean == null){
             return null;
         }
@@ -166,8 +164,7 @@ public class PageResponse<T> implements Serializable {
         if (data == null || "null".equals(data) ){
             return new PageResponse<>(code, msg, pageNo, pageSize, total, totalPages, null);
         }
-
-        List<T> list = JsonHelper.transToList(data, bean);
+        List<T> list = JSONUtil.toList(JSONUtil.parseArray(data), bean);
         return new PageResponse<>(code, msg, pageNo, pageSize, total, totalPages, list);
     }
 }

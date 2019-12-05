@@ -1,4 +1,4 @@
-package com.tools.validate;
+package com.tools.aop.validate;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -8,7 +8,6 @@ import java.util.Set;
 /**
  * Created by Darren at 2018-05-24 13:04
  */
-
 public class ValidateHelper {
     public static <T> void validate(T t) throws ValidateException {
         ValidatorFactory vFactory = Validation.buildDefaultValidatorFactory();
